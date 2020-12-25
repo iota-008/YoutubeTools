@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %} Youtube Video Transcipt Downloader {% endblock %}
+{% block main %}
+
+<div class="container-fluid">
+
+    <div action="gettext" class="form-group">
+        <form method="post">
+            <label for="url">ENTER VIDEO URL</label>
+            <input class="form-control" type="text" id="url" name="url" required />
+            <br>
+            <button id="submit" formaction="gettext" type="submit" class="btn btn-primary btn-lg btn3d"><span
+                    class="glyphicon glyphicon-download-alt"></span>
+                Get Transcript
+            </button>
+            <button id="submit" formaction="download" type="submit" class="btn btn-primary btn-lg btn3d"><span
+                    class="glyphicon glyphicon-download-alt"></span>
+                Download Video
+            </button>
+            <button id="submit" formaction="thumbnail" type="submit" class="btn btn-primary btn-lg btn3d"><span
+                    class="glyphicon glyphicon-download-alt"></span>
+                Download Thumbnail
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<br />
+
+{% endblock %}

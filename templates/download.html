@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %} Download Video {% endblock %}
+{%block main%}
+
+
+<div id="quality" class="wrap">
+    <h2 class="full-width">SELECT VIDEO QUALITY</h2>
+    <br>
+    <form method="post">
+        {% for video in videos %}
+        <button formaction="videoQuality" name="video" value="{{video}}" class="btn btn-primary btn-lg btn3d"><span
+                class="glyphicon glyphicon-download-alt"></span>
+            Download In {{video['resolution']}}
+        </button>
+        <br />
+        {% endfor %}
+        <br />
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block main %}
+
+<div class="container-fluid">
+    <textarea rows=20 cols=185 id="transcript"> </textarea>
+    <button id="cc" onclick="fnc()" class="btn btn-primary btn-lg btn3d"><span
+            class="glyphicon glyphicon-download-alt"></span>See Text</button>
+    <button id="dload" onclick="dload()" class="btn btn-primary btn-lg btn3d"><span
+            class="glyphicon glyphicon-download-alt"></span>Download</button>
+</div>
+
+<br />
+<!-- <script>
+    document.getElementById("dload").onclick = function () {
+        var l = document.createElement("a");
+        l.href = "data:text/plain;charset=UTF-8," + document.getElementById("transcript").value;
+        l.setAttribute("download", "transcript.txt");
+        l.click();
+    }
+</script> -->
+
+{% endblock %}

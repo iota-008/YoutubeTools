@@ -1,0 +1,17 @@
+{% extends "base.html" %} {%block title%} Download Thumbnail {%endblock%}
+{%block main%}
+
+<div class="container">
+	<img src="{{url}}" alt="Thumbnail Image" />
+</div>
+<br />
+<div id="thumbnail">
+	<button
+		class="btn btn-primary btn-lg btn3d"
+		onclick="downloadThumbnail('{{url}}')"
+	>
+		<span class="glyphicon glyphicon-download-alt">Download Image</span>
+	</button>
+</div>
+
+{%endblock%}
