@@ -11,7 +11,8 @@ from flask_cors import CORS, cross_origin
 
 
 app = Flask(__name__)
-CORS(app,origins=["http://localhost:5000"], headers=['Content-Type'], expose_headers=['Access-Control-Allow-Origin'], supports_credentials=True)
+# origins=["http://localhost:5000"], 
+CORS(app,headers=['Content-Type'], expose_headers=['Access-Control-Allow-Origin'], supports_credentials=True)
 jsglue = JSGlue(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = "6969696969"

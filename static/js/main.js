@@ -33,8 +33,8 @@ function dload() {
 function downloadThumbnail(url, name = "thumbnail") {
 	const proxyurl = "https://cors-anywhere.herokuapp.com/";
 	let headers = new Headers();
-	headers.append("Access-Control-Allow-Origin", "http://127.0.0.1:5000");
-	headers.append("Access-Control-Allow-Credentials", "true");
+	// headers.append("Access-Control-Allow-Origin", "http://127.0.0.1:5000");
+	// headers.append("Access-Control-Allow-Credentials", "true");
 
 	axios(
 		{
