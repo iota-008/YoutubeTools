@@ -16,6 +16,7 @@ CORS(app,headers=['Content-Type'], expose_headers=['Access-Control-Allow-Origin'
 jsglue = JSGlue(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = "6969696969"
+SAVE_PATH = "C:/"
 
 videos = []
 
@@ -64,8 +65,8 @@ def videoQuality():
         for v in videos:
             if request.form['video'] == v:
                 video_download = v
-        video_download.download() 
-        flash("Video Downloaded Successfully")
+        video_download.download(SAVE_PATH) 
+        flash("Video Downloaded Successfully into 'C' Drive")
         return redirect(url_for('index'))
     else:
         flash("Something Went Wrong")
