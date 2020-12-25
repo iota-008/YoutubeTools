@@ -16,7 +16,7 @@ CORS(app,headers=['Content-Type'], expose_headers=['Access-Control-Allow-Origin'
 jsglue = JSGlue(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = "6969696969"
-SAVE_PATH = "C:/"
+SAVE_PATH = "E:/"
 
 videos = []
 
