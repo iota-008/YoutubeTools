@@ -66,7 +66,7 @@ def videoQuality():
             if request.form['video'] == v:
                 video_download = v
         video_download.download(SAVE_PATH) 
-        flash("Video Downloaded Successfully into 'C' Drive")
+        flash("Video Downloaded Successfully into C Drive")
         return redirect(url_for('index'))
     else:
         flash("Something Went Wrong")
