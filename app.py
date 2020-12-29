@@ -8,9 +8,10 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from flask_jsglue import JSGlue
 from pytube import YouTube
 from flask_cors import CORS, cross_origin
-
+from flask_talisman import Talisman
 
 app = Flask(__name__)
+Talisman(app, content_security_policy=None)
 # origins=["http://localhost:5000"], 
 CORS(app,headers=['Content-Type'], expose_headers=['Access-Control-Allow-Origin'], supports_credentials=True)
 jsglue = JSGlue(app)
