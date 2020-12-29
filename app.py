@@ -1,8 +1,7 @@
 from flask import Flask,render_template,request,url_for
 from flask.helpers import flash
 from flask.json import jsonify
-import requests
-from requests import sessions
+from flask import Response
 from werkzeug.utils import redirect 
 from youtube_transcript_api import YouTubeTranscriptApi
 from flask_jsglue import JSGlue
@@ -88,4 +87,4 @@ def thumbnail():
 
 @app.route('/sitemap.xml',methods=['GET','POST'])
 def sitemap():
-    return render_template('sitemap.xml')
+    return render_template('sitemap.html')  
