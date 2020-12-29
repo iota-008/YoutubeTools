@@ -1,5 +1,8 @@
+import os
+from os import path
 from flask import Flask,render_template,request,url_for
 from flask import flash, send_from_directory
+from flask.helpers import make_response
 from flask.json import jsonify
 from flask import Response
 from werkzeug.utils import redirect 
@@ -8,6 +11,7 @@ from flask_jsglue import JSGlue
 from pytube import YouTube
 from flask_cors import CORS, cross_origin
 from flask_talisman import Talisman
+from pathlib import Path
 
 app = Flask(__name__)
 Talisman(app, content_security_policy=None)
@@ -16,7 +20,8 @@ CORS(app,headers=['Content-Type'], expose_headers=['Access-Control-Allow-Origin'
 jsglue = JSGlue(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = "6969696969"
-SAVE_PATH = "E:/"
+
+SAVE_PATH = str(os.path.join(Path.home(), "Downloads"))
 
 videos = []
 
@@ -66,7 +71,7 @@ def videoQuality():
             if request.form['video'] == v:
                 video_download = v
         video_download.download(SAVE_PATH) 
-        flash("Video Downloaded Successfully into C Drive")
+        flash("Video Downloaded Successfully")
         return redirect(url_for('index'))
     else:
         flash("Something Went Wrong")
@@ -84,7 +89,12 @@ def thumbnail():
         flash("Something Went Wrong")
         return render_template('index.html')
 
-@app.route('/robots.txt')
-@app.route('/sitemap.xml')
-def static_from_root():
-    return send_from_directory(app.static_folder, request.path[1:])
+# @app.route('/robots.txt')
+# @app.route('/sitemap.xml')
+# def static_from_root():
+#     return send_from_directory(app.static_folder, request.path[1:])
+@app.route('/sitemap.xml', methods=['GET'])
+def sitemap():
+  response = make_response(open('static/sitemap.xml').read())
+  response.headers["Content-type"] = "text/plain"
+  return response
