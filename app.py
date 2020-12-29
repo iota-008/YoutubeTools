@@ -84,3 +84,8 @@ def thumbnail():
     else:
         flash("Something Went Wrong")
         return render_template('index.html')
+
+
+@app.route('/sitemap.xml',methods=['GET','POST'])
+def sitemap():
+    return render_template('sitemap.xml')
