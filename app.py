@@ -96,5 +96,5 @@ def thumbnail():
 @app.route('/sitemap.xml', methods=['GET'])
 def sitemap():
   response = make_response(open('static/sitemap.xml').read())
-  response.headers["Content-type"] = "text/xml"
+  response.headers["Content-type"] = "application/xml"
   return response
