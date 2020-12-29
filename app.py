@@ -1,5 +1,5 @@
 from flask import Flask,render_template,request,url_for
-from flask.helpers import flash
+from flask import flash, send_from_directory
 from flask.json import jsonify
 from flask import Response
 from werkzeug.utils import redirect 
@@ -84,7 +84,7 @@ def thumbnail():
         flash("Something Went Wrong")
         return render_template('index.html')
 
-
-@app.route('/sitemap.xml',methods=['GET','POST'])
-def sitemap():
-    return render_template('sitemap.html')  
+@app.route('/robots.txt')
+@app.route('/sitemap.xml')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
