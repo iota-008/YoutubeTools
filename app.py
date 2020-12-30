@@ -16,7 +16,7 @@ from flask_sitemap import Sitemap
 
 app = Flask(__name__)
 ext = Sitemap(app=app)
-Talisman(app, content_security_policy=None,required=True,force_https=True)
+Talisman(app, content_security_policy=None,force_https=True)
 
 # origins=["http://localhost:5000"], 
 
