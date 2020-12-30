@@ -12,8 +12,10 @@ from pytube import YouTube
 from flask_cors import CORS, cross_origin
 from flask_talisman import Talisman
 from pathlib import Path
+from flask_sitemap import Sitemap
 
 app = Flask(__name__)
+ext = Sitemap(app=app)
 Talisman(app, content_security_policy=None)
 # origins=["http://localhost:5000"], 
 CORS(app,headers=['Content-Type'], expose_headers=['Access-Control-Allow-Origin'], supports_credentials=True)
@@ -29,6 +31,11 @@ videos = []
 def index():
     return render_template('index.html')
 
+@ext.register_generator
+def index():
+    # Not needed if you set SITEMAP_INCLUDE_RULES_WITHOUT_PARAMS=True
+    yield 'index', {}
+    
 app.errorhandler(404)
 def page_not_found(e):
     return render_template('page_not_found.html'),404
@@ -93,8 +100,12 @@ def thumbnail():
 # @app.route('/sitemap.xml')
 # def static_from_root():
 #     return send_from_directory(app.static_folder, request.path[1:])
-@app.route('/sitemap.xml', methods=['GET'])
-def sitemap():
-  response = make_response(open('static/sitemap.xml').read())
-  response.headers["Content-type"] = "text/xml"
-  return response
+# @app.route('/sitemap.xml')
+# def site_map():
+#   articles = sorted(flatpages, key=lambda item:item.meta['published'], reverse=False)
+#   return render_template('sitemap_template.xml', articles=articles, base_url=“https://yt-tools.herokuapp.com/”)
+# @app.route('/sitemap.xml', methods=['GET'])
+# def sitemap():
+#   response = make_response(open('static/sitemap.xml').read())
+#   response.headers["Content-type"] = "text/xml"
+#   return response
