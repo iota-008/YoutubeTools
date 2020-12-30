@@ -16,8 +16,10 @@ from flask_sitemap import Sitemap
 
 app = Flask(__name__)
 ext = Sitemap(app=app)
-Talisman(app, content_security_policy=None)
+Talisman(app, content_security_policy=None,required=True,force_https=True)
+
 # origins=["http://localhost:5000"], 
+
 CORS(app,headers=['Content-Type'], expose_headers=['Access-Control-Allow-Origin'], supports_credentials=True)
 jsglue = JSGlue(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -31,10 +33,10 @@ videos = []
 def index():
     return render_template('index.html')
 
-@ext.register_generator
-def index():
-    # Not needed if you set SITEMAP_INCLUDE_RULES_WITHOUT_PARAMS=True
-    yield 'index', {}
+# @ext.register_generator
+# def index():
+#     # Not needed if you set SITEMAP_INCLUDE_RULES_WITHOUT_PARAMS=True
+#     yield 'index', {}
     
 app.errorhandler(404)
 def page_not_found(e):
@@ -55,7 +57,8 @@ def gettext():
     
     else:
         flash("Something Went Wrong")
-        return render_template('index.html')
+        # return render_template('index.html')
+        return redirect(url_for('index'),code=301)
 
 @app.route('/download',methods=["GET","POST"])
 def download():
@@ -68,7 +71,7 @@ def download():
         return render_template('download.html',videos=videos)
     else:
         flash("Something Went Wrong")
-        return render_template('index.html')
+        return redirect(url_for('index'),code=301)
 
 @app.route('/videoQuality',methods=["GET","POST"])
 def videoQuality():
@@ -82,7 +85,7 @@ def videoQuality():
         return redirect(url_for('index'))
     else:
         flash("Something Went Wrong")
-        return render_template('index.html')
+        return redirect(url_for('index'),code=301)
 
 @app.route('/thumbnail',methods=["POST","GET"])
 @cross_origin()
@@ -94,18 +97,9 @@ def thumbnail():
         return render_template('thumbnail.html',url=thumbnail_url)
     else:
         flash("Something Went Wrong")
-        return render_template('index.html')
+        return redirect(url_for('index'),code=301)
 
-# @app.route('/robots.txt')
-# @app.route('/sitemap.xml')
-# def static_from_root():
-#     return send_from_directory(app.static_folder, request.path[1:])
-# @app.route('/sitemap.xml')
-# def site_map():
-#   articles = sorted(flatpages, key=lambda item:item.meta['published'], reverse=False)
-#   return render_template('sitemap_template.xml', articles=articles, base_url=“https://yt-tools.herokuapp.com/”)
-# @app.route('/sitemap.xml', methods=['GET'])
-# def sitemap():
-#   response = make_response(open('static/sitemap.xml').read())
-#   response.headers["Content-type"] = "text/xml"
-#   return response
+@app.route('/robots.txt')
+@app.route('/sitemap.xml')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
