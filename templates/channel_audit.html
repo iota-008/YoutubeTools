@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %} Channel Audit {% endblock %}
+{% block main %}
+
+<section class="surface-card">
+    <h1>Channel Audit</h1>
+    <p class="section-subtitle">Analyze recent videos to understand packaging and content trends.</p>
+
+    <form method="post" class="tool-form" data-loading="true">
+        <label class="field-label" for="channel_url">Channel URL or Handle Path</label>
+        <input class="material-input" id="channel_url" name="channel_url" type="text" placeholder="https://www.youtube.com/@yourchannel" required />
+        <div class="action-row mt-3">
+            <button class="material-btn" type="submit">Run Channel Audit</button>
+        </div>
+    </form>
+</section>
+
+{% if report %}
+<section class="surface-card">
+    <h2>Audit Summary</h2>
+    <p class="muted-text">Channel: <a class="text-link" href="{{ report.channel_url }}" target="_blank" rel="noopener noreferrer">{{ report.channel_url }}</a></p>
+    <p class="muted-text">Source: {{ report.data_source }} · Enriched videos: {{ report.enriched_count }}/{{ report.sample_size }}</p>
+
+    <div class="hub-grid mt-3">
+        <article class="tool-card">
+            <h3>Sampled Videos</h3>
+            <p>{{ report.sample_size }}</p>
+        </article>
+        <article class="tool-card">
+            <h3>Avg Title Length</h3>
+            <p>{{ report.avg_title_length }}</p>
+        </article>
+        <article class="tool-card">
+            <h3>Avg Duration</h3>
+            <p>{{ report.avg_duration_min if report.avg_duration_min is not none else '-' }}{% if report.avg_duration_min is not none %} min{% endif %}</p>
+        </article>
+        <article class="tool-card">
+            <h3>Avg Views</h3>
+            <p>{{ report.avg_views if report.avg_views is not none else '-' }}</p>
+        </article>
+    </div>
+
+    <h3 class="mt-4">Top Title Keywords</h3>
+    <p>
+        {% for keyword in report.top_keywords %}
+        <span class="status-chip chip-live">{{ keyword }}</span>
+        {% endfor %}
+    </p>
+
+    <h3 class="mt-4">Recommendations</h3>
+    <ul class="material-list">
+        {% for rec in report.recommendations %}
+        <li>{{ rec }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3 class="mt-4">Sampled Videos</h3>
+    <div class="table-wrap">
+        <table class="table history-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Duration (min)</th>
+                    <th>Views</th>
+                    <th>Link</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for video in report.sampled_videos %}
+                <tr>
+                    <td>{{ video.title }}</td>
+                    <td>{{ video.duration_min if video.duration_min is not none else '-' }}</td>
+                    <td>{{ video.views if video.views is not none else '-' }}</td>
+                    <td><a class="text-link" href="{{ video.url }}" target="_blank" rel="noopener noreferrer">Open</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

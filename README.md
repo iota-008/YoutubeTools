@@ -1,12 +1,15 @@
 # YouTube Tools Hub
 
-YouTube Tools Hub is a Flask app that brings multiple creator utilities into one place. The current version focuses on transcript extraction, thumbnail access, and video stream selection, with a roadmap to evolve into a full portfolio of YouTube-focused tools.
+YouTube Tools Hub is a Flask app that brings multiple creator utilities into one place. It now ships as a modern Material-style dashboard with six working tools and persistent run history.
 
 ## Current tools
 
 - Transcript extractor (with quick text download)
 - Thumbnail fetcher
 - Video stream selector (quality-aware)
+- Title and description SEO optimizer
+- Channel audit (recent-video pattern analysis)
+- Idea generator (hook, angle, and CTA suggestions)
 
 ## Why this version is production-ready
 
@@ -16,6 +19,7 @@ YouTube Tools Hub is a Flask app that brings multiple creator utilities into one
 - Environment-driven security config (`SECRET_KEY`, optional `FORCE_HTTPS`)
 - Persistent run history stored in SQL database
 - Docker + Gunicorn runtime
+- Modern Material-style dashboard UI
 
 ## Stack
 
@@ -50,7 +54,7 @@ YouTube Tools Hub is a Flask app that brings multiple creator utilities into one
 
 ## Production run
 
-Use the Procfile command (or equivalent):
+Use Gunicorn (or equivalent process manager):
 
 `gunicorn --bind 0.0.0.0:$PORT app:app`
 
@@ -59,6 +63,57 @@ Set environment variables in production:
 - `SECRET_KEY` (required)
 - `FORCE_HTTPS=true` when behind TLS/reverse proxy
 - `DATABASE_URL` (defaults to local SQLite if omitted)
+
+## Deploy to VM (Traefik + GitHub Actions)
+
+This repo is configured to deploy the same way as your previous project:
+
+- `docker-compose.prod.yml` with Traefik labels
+- GitHub Actions workflow: `.github/workflows/deploy.yml`
+- Production env template: `.env.production.example`
+
+### 1) One-time VM setup
+
+Install Docker + Docker Compose plugin on the VM, then create the shared Traefik network (same network your reverse proxy uses):
+
+`docker network create web`
+
+### 2) Create production env file on VM
+
+On the VM deployment path, create `.env.production` from `.env.production.example` and set real values:
+
+- `SECRET_KEY`
+- `APP_DOMAIN` (e.g. `yttools.yourdomain.duckdns.org`)
+- `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`
+- `DATABASE_URL` (must match the DB credentials)
+
+### 3) Configure GitHub repository secrets
+
+- `VM_HOST` → VM public IP or DNS
+- `SSH_PRIVATE_KEY` → private key content used for SSH login
+- `VM_HOST_KEY` (optional but recommended) → host key from `ssh-keyscan`
+
+### 4) Configure GitHub repository variables
+
+- `VM_USER` → SSH user on VM
+- `DEPLOY_PATH` → target folder on VM (example: `/opt/youtubetools`)
+- `COMPOSE_FILE` (optional) → defaults to `${DEPLOY_PATH}/docker-compose.prod.yml`
+- `ENV_FILE` (optional) → defaults to `${DEPLOY_PATH}/.env.production`
+
+### 5) Trigger deployment
+
+Push to `master` (or run workflow manually). The deploy job will:
+
+- clone latest repo on VM
+- build Docker image
+- validate compose config
+- start/update containers with `docker compose up -d`
+
+### Notes
+
+- This app uses PostgreSQL in production compose.
+- `psycopg[binary]` is included in `requirements.txt` for `postgresql+psycopg://` support.
+- If workflow says env file is missing, create `.env.production` at the path used by `ENV_FILE`.
 
 ## Operational endpoints
 

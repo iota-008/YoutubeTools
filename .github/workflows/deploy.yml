@@ -1,0 +1,91 @@
+name: Deploy YouTube Tools
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  VM_USER: ${{ vars.VM_USER }}
+  DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+  COMPOSE_FILE: ${{ vars.COMPOSE_FILE }}
+  ENV_FILE: ${{ vars.ENV_FILE }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Add VM host key
+        if: ${{ secrets.VM_HOST_KEY != '' }}
+        env:
+          VM_HOST_KEY: ${{ secrets.VM_HOST_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$VM_HOST_KEY" >> ~/.ssh/known_hosts
+
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ env.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          timeout: 1h
+          command_timeout: 1h
+          script: |
+            set -euo pipefail
+            echo "Starting YouTube Tools deployment..."
+
+            if [ -z "${{ env.VM_USER }}" ] || [ -z "${{ env.DEPLOY_PATH }}" ]; then
+              echo "Missing required repository variables. Set VM_USER and DEPLOY_PATH."
+              exit 1
+            fi
+
+            COMPOSE_FILE_PATH="${{ env.COMPOSE_FILE }}"
+            if [ -z "$COMPOSE_FILE_PATH" ]; then
+              COMPOSE_FILE_PATH="${{ env.DEPLOY_PATH }}/docker-compose.prod.yml"
+            fi
+
+            ENV_FILE_PATH="${{ env.ENV_FILE }}"
+            if [ -z "$ENV_FILE_PATH" ]; then
+              ENV_FILE_PATH="${{ env.DEPLOY_PATH }}/.env.production"
+            fi
+
+            echo "Preparing deployment directory: ${{ env.DEPLOY_PATH }}"
+            sudo rm -rf "${{ env.DEPLOY_PATH }}"
+            sudo mkdir -p "${{ env.DEPLOY_PATH }}"
+            sudo chown -R "${{ env.VM_USER }}": "${{ env.DEPLOY_PATH }}"
+
+            echo "Cloning latest repository into deployment path"
+            git clone "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" "${{ env.DEPLOY_PATH }}"
+            cd "${{ env.DEPLOY_PATH }}"
+            git checkout master
+
+            if [ ! -f "$ENV_FILE_PATH" ]; then
+              echo "Missing env file: $ENV_FILE_PATH"
+              echo "Create it from .env.production.example before deploying."
+              exit 1
+            fi
+
+            if [ ! -f "$COMPOSE_FILE_PATH" ]; then
+              echo "Missing compose file: $COMPOSE_FILE_PATH"
+              exit 1
+            fi
+
+            echo "Building and validating compose stack"
+            docker compose -f "$COMPOSE_FILE_PATH" --env-file "$ENV_FILE_PATH" pull --ignore-pull-failures
+            docker compose -f "$COMPOSE_FILE_PATH" --env-file "$ENV_FILE_PATH" build --pull --parallel
+            docker compose -f "$COMPOSE_FILE_PATH" --env-file "$ENV_FILE_PATH" config -q
+
+            echo "Starting services"
+            docker compose -f "$COMPOSE_FILE_PATH" --env-file "$ENV_FILE_PATH" up -d --remove-orphans
+
+            echo "Container status"
+            docker compose -f "$COMPOSE_FILE_PATH" --env-file "$ENV_FILE_PATH" ps
+
+            echo "Recent web logs"
+            docker compose -f "$COMPOSE_FILE_PATH" --env-file "$ENV_FILE_PATH" logs --tail=40 web || true
+
+            echo "Deployment complete"

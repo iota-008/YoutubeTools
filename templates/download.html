@@ -1,24 +1,24 @@
 {% extends "base.html" %}
-{% block title %} Download Video {% endblock %}
+{% block title %} Video Stream Selector {% endblock %}
 {%block main%}
 
+<section class="surface-card">
+    <h1>Video Stream Selector</h1>
+    <p class="section-subtitle">Choose the stream quality and open the direct media URL.</p>
 
-<div id="quality" class="wrap">
-    <h2 class="full-width">SELECT VIDEO QUALITY</h2>
-    <br>
     {% for option in stream_options %}
-    <form method="post" action="{{ url_for('video_quality') }}">
+    <form method="post" action="{{ url_for('video_quality') }}" class="stream-form">
         <input type="hidden" name="url" value="{{ url }}" />
         <input type="hidden" name="itag" value="{{ option['itag'] }}" />
-        <button class="btn btn-primary btn-lg btn3d"><span class="glyphicon glyphicon-download-alt"></span>
-            Download {{ option['resolution'] }} · {{ option['mime_type'] }}
+        <input type="hidden" name="source" value="{{ option['source'] }}" />
+        <input type="hidden" name="direct_url" value="{{ option['direct_url'] }}" />
+        <button class="material-btn full-btn">
+            Open {{ option['resolution'] }} · {{ option['mime_type'] }}
             {% if option['fps'] %} · {{ option['fps'] }}fps{% endif %}
             {% if option['size_mb'] %} · {{ option['size_mb'] }} MB{% endif %}
         </button>
-        <br />
     </form>
     {% endfor %}
-    <br />
-</div>
+</section>
 
 {% endblock %}

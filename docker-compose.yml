@@ -1,0 +1,49 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: youtubetools:latest
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    depends_on:
+      db:
+        condition: service_healthy
+    expose:
+      - "8000"
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.youtubetools.rule=Host(`${APP_DOMAIN}`)"
+      - "traefik.http.routers.youtubetools.entrypoints=websecure"
+      - "traefik.http.routers.youtubetools.tls.certresolver=letsencrypt"
+      - "traefik.http.services.youtubetools.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.youtubetools-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.youtubetools-http.rule=Host(`${APP_DOMAIN}`)"
+      - "traefik.http.routers.youtubetools-http.entrypoints=web"
+      - "traefik.http.routers.youtubetools-http.middlewares=youtubetools-https-redirect"
+      - "traefik.docker.network=web"
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
+
+volumes:
+  postgres_data:

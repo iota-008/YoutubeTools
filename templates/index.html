@@ -2,50 +2,53 @@
 {% block title %} YouTube Tools Hub {% endblock %}
 {% block main %}
 
-<div class="container-fluid">
-    <h2 class="full-width">YouTube Tools Hub</h2>
-    <p class="text-light">
-        One place for transcript, thumbnail, and download utilities with persistent run history.
+<section class="hero-card">
+    <p class="section-eyebrow">Toolkit</p>
+    <h1>YouTube Tools Hub</h1>
+    <p class="section-subtitle">
+        Run transcript, video, thumbnail, SEO, channel audit, and idea-generation workflows from one dashboard.
     </p>
+</section>
 
-    <div action="gettext" class="form-group">
-        <form method="post">
-            <label for="url">ENTER VIDEO URL</label>
-            <input class="form-control" type="text" id="url" name="url" required />
-            <br>
-            <button id="submit" formaction="{{ url_for('gettext') }}" type="submit" class="btn btn-primary btn-lg btn3d"><span
-                    class="glyphicon glyphicon-download-alt"></span>
-                Get Transcript
-            </button>
-            <button id="submit" formaction="{{ url_for('download') }}" type="submit" class="btn btn-primary btn-lg btn3d"><span
-                    class="glyphicon glyphicon-download-alt"></span>
-                Download Video
-            </button>
-            <button id="submit" formaction="{{ url_for('thumbnail') }}" type="submit" class="btn btn-primary btn-lg btn3d"><span
-                    class="glyphicon glyphicon-download-alt"></span>
-                Download Thumbnail
-            </button>
-        </form>
-    </div>
-
-    <div class="hub-grid mt-4">
-        {% for tool in tools %}
-        <div class="tool-card">
-            <h4>{{ tool.name }}</h4>
-            <p>{{ tool.description }}</p>
-            {% if tool.status == 'live' %}
-            <span class="badge badge-success">Live</span>
-            {% else %}
-            <span class="badge badge-secondary">Planned</span>
-            {% endif %}
+<section class="surface-card quick-actions">
+    <h2>Quick Actions</h2>
+    <form method="post" class="quick-form" data-loading="true">
+        <label class="field-label" for="url">YouTube URL</label>
+        <input class="material-input" type="text" id="url" name="url" placeholder="https://www.youtube.com/watch?v=..." required />
+        <div class="action-row">
+            <button formaction="{{ url_for('gettext') }}" type="submit" class="material-btn">Transcript</button>
+            <button formaction="{{ url_for('download') }}" type="submit" class="material-btn">Video Streams</button>
+            <button formaction="{{ url_for('thumbnail') }}" type="submit" class="material-btn">Thumbnail</button>
         </div>
+    </form>
+</section>
+
+<section class="surface-card">
+    <h2>All Tools</h2>
+    <div class="hub-grid">
+        {% for tool in tools %}
+        <article class="tool-card">
+            <div class="card-head">
+                <h3>{{ tool.name }}</h3>
+                <span class="status-chip {{ 'chip-live' if tool.status == 'live' else 'chip-planned' }}">{{ tool.status|title }}</span>
+            </div>
+            <p>{{ tool.description }}</p>
+            {% if tool.path %}
+            <a class="tool-link" href="{{ tool.path }}">{{ tool.button_label }}</a>
+            {% endif %}
+        </article>
         {% endfor %}
     </div>
+</section>
 
-    <div class="history-block mt-4">
-        <h3 class="text-light">Recent Runs</h3>
-        {% if recent_runs %}
-        <table class="table table-dark table-striped table-sm">
+<section class="surface-card">
+    <div class="card-head">
+        <h2>Recent Runs</h2>
+        <a class="text-link" href="{{ url_for('history') }}">View full history</a>
+    </div>
+    {% if recent_runs %}
+    <div class="table-wrap">
+        <table class="table history-table">
             <thead>
                 <tr>
                     <th>Tool</th>
@@ -67,13 +70,10 @@
                 {% endfor %}
             </tbody>
         </table>
-        {% else %}
-        <p class="text-light">No runs yet. Try any tool above.</p>
-        {% endif %}
     </div>
-
-</div>
-
-<br />
+    {% else %}
+    <p class="muted-text">No runs yet. Execute a tool to populate activity history.</p>
+    {% endif %}
+</section>
 
 {% endblock %}

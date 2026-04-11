@@ -1,19 +1,43 @@
-{% extends "base.html" %} {%block title%} Download Thumbnail {%endblock%}
+{% extends "base.html" %}
+{%block title%} Thumbnail Tool {%endblock%}
 {%block main%}
 
-<div class="container">
-	<img src="{{url}}" alt="Thumbnail Image" />
-</div>
-<br />
-<div id="thumbnail">
-	<a
-		class="btn btn-primary btn-lg btn3d"
-		href="{{ url }}"
-		target="_blank"
-		rel="noopener noreferrer"
-	>
-		<span class="glyphicon glyphicon-download-alt">Open Thumbnail</span>
-	</a>
-</div>
+<section class="surface-card">
+	<h1>Thumbnail Tool</h1>
+	<p class="section-subtitle">Preview thumbnail and download in available resolutions.</p>
+	<div class="thumbnail-preview">
+		<img src="{{url}}" alt="Thumbnail Image" />
+	</div>
+
+	<div class="table-wrap mt-3">
+		<table class="table history-table">
+			<thead>
+				<tr>
+					<th>Resolution</th>
+					<th>Status</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for option in thumbnail_options %}
+				<tr>
+					<td>{{ option.label }}</td>
+					<td>{{ 'Available' if option.available else 'Unavailable' }}</td>
+					<td>
+						{% if option.available %}
+						<div class="action-row">
+							<a class="material-btn" href="{{ option.url }}" target="_blank" rel="noopener noreferrer">Open</a>
+							<a class="material-btn" href="{{ url_for('download_thumbnail', video_id=video_id, quality=option.quality) }}">Download</a>
+						</div>
+						{% else %}
+						<span class="muted-text">-</span>
+						{% endif %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</section>
 
 {%endblock%}

@@ -1,19 +1,15 @@
-{% extends "base.html" %} {% block main %}
+{% extends "base.html" %}
+{% block title %} Transcript Extractor {% endblock %}
+{% block main %}
 
-<div class="container-fluid">
-    <textarea rows=20 cols=185 id="transcript">{{ transcript_text }}</textarea>
-    <button id="dload" onclick="dload()" class="btn btn-primary btn-lg btn3d"><span
-            class="glyphicon glyphicon-download-alt"></span>Download</button>
-</div>
+<section class="surface-card">
+    <h1>Transcript Extractor</h1>
+    <p class="section-subtitle">Review, copy, or download transcript text as a file.</p>
 
-<br />
-<!-- <script>
-    document.getElementById("dload").onclick = function () {
-        var l = document.createElement("a");
-        l.href = "data:text/plain;charset=UTF-8," + document.getElementById("transcript").value;
-        l.setAttribute("download", "transcript.txt");
-        l.click();
-    }
-</script> -->
+    <textarea rows="20" id="transcript" class="material-textarea">{{ transcript_text }}</textarea>
+    <div class="action-row mt-3">
+        <button id="dload" onclick="dload()" class="material-btn">Download Transcript</button>
+    </div>
+</section>
 
 {% endblock %}

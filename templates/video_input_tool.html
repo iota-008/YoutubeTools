@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %} {{ tool_title }} {% endblock %}
+{% block main %}
+
+<section class="surface-card">
+    <h1>{{ tool_title }}</h1>
+    <p class="section-subtitle">{{ tool_subtitle }}</p>
+
+    <form method="post" action="{{ submit_action }}" class="tool-form" data-loading="true">
+        <label class="field-label" for="url">{{ field_label }}</label>
+        <input class="material-input" id="url" name="url" type="text" placeholder="https://www.youtube.com/watch?v=..." required />
+
+        {% if language_options %}
+        <label class="field-label" for="language">Transcript Language</label>
+        <select class="material-input" id="language" name="language">
+            {% for language_code, language_label in language_options %}
+            <option value="{{ language_code }}" {% if selected_language == language_code %}selected{% endif %}>{{ language_label }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+
+        <div class="action-row mt-3">
+            <button class="material-btn" type="submit">{{ submit_label }}</button>
+        </div>
+    </form>
+</section>
+
+{% endblock %}

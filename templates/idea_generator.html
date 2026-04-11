@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %} Idea Generator {% endblock %}
+{% block main %}
+
+<section class="surface-card">
+    <h1>Idea Generator</h1>
+    <p class="section-subtitle">Generate structured YouTube video ideas with hooks, angles, and CTA prompts.</p>
+
+    <form method="post" class="tool-form" data-loading="true">
+        <label class="field-label" for="niche">Niche / Topic</label>
+        <input class="material-input" id="niche" name="niche" type="text" placeholder="AI tools, fitness, coding, personal finance..." required />
+
+        <label class="field-label" for="audience">Audience</label>
+        <input class="material-input" id="audience" name="audience" type="text" placeholder="Beginners, students, founders..." />
+
+        <label class="field-label" for="content_goal">Content Goal</label>
+        <input class="material-input" id="content_goal" name="content_goal" type="text" placeholder="Growth, watch-time, conversion..." />
+
+        <label class="field-label" for="count">Number of Ideas</label>
+        <input class="material-input" id="count" name="count" type="number" min="3" max="20" value="10" />
+
+        <div class="action-row mt-3">
+            <button class="material-btn" type="submit">Generate Ideas</button>
+        </div>
+    </form>
+</section>
+
+{% if ideas %}
+<section class="surface-card">
+    <h2>Generated Ideas</h2>
+    <p class="muted-text">Niche: {{ niche }}{% if audience %} · Audience: {{ audience }}{% endif %}{% if content_goal %} · Goal: {{ content_goal }}{% endif %}</p>
+
+    <div class="hub-grid mt-3">
+        {% for idea in ideas %}
+        <article class="tool-card">
+            <h3>{{ loop.index }}. {{ idea.title }}</h3>
+            <p><strong>Angle:</strong> {{ idea.angle }}</p>
+            <p><strong>CTA:</strong> {{ idea.cta }}</p>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}
