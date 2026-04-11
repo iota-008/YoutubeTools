@@ -25,6 +25,7 @@ div > h5 > a {
 }
 .container-fluid {
 	border-radius: 10px;
+	max-width: 1200px;
 }
 
 .form-control {
@@ -116,4 +117,36 @@ div > ul > li {
 	box-shadow: 0 0 0 1px #417fbd inset, 0 0 0 1px rgba(255, 255, 255, 0.15) inset,
 		0 1px 3px 1px rgba(0, 0, 0, 0.3);
 	background-color: #4274d7;
+}
+
+.hub-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: 16px;
+}
+
+.tool-card {
+	background: #1a2028;
+	border: 1px solid #303b46;
+	padding: 14px;
+	border-radius: 10px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.tool-card h4 {
+	color: #ffffff;
+	margin-bottom: 8px;
+}
+
+.tool-card p {
+	color: #cfd6df;
+	font-size: 14px;
+	margin-bottom: 10px;
+}
+
+.history-block {
+	background: #1a2028;
+	border: 1px solid #303b46;
+	padding: 14px;
+	border-radius: 10px;
 }

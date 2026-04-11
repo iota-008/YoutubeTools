@@ -6,16 +6,19 @@
 <div id="quality" class="wrap">
     <h2 class="full-width">SELECT VIDEO QUALITY</h2>
     <br>
-    <form method="post">
-        {% for video in videos %}
-        <button formaction="videoQuality" name="video" value="{{video}}" class="btn btn-primary btn-lg btn3d"><span
-                class="glyphicon glyphicon-download-alt"></span>
-            Download In {{video['resolution']}}
+    {% for option in stream_options %}
+    <form method="post" action="{{ url_for('video_quality') }}">
+        <input type="hidden" name="url" value="{{ url }}" />
+        <input type="hidden" name="itag" value="{{ option['itag'] }}" />
+        <button class="btn btn-primary btn-lg btn3d"><span class="glyphicon glyphicon-download-alt"></span>
+            Download {{ option['resolution'] }} · {{ option['mime_type'] }}
+            {% if option['fps'] %} · {{ option['fps'] }}fps{% endif %}
+            {% if option['size_mb'] %} · {{ option['size_mb'] }} MB{% endif %}
         </button>
         <br />
-        {% endfor %}
-        <br />
     </form>
+    {% endfor %}
+    <br />
 </div>
 
 {% endblock %}

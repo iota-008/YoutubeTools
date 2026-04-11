@@ -1,9 +1,7 @@
 {% extends "base.html" %} {% block main %}
 
 <div class="container-fluid">
-    <textarea rows=20 cols=185 id="transcript"> </textarea>
-    <button id="cc" onclick="fnc()" class="btn btn-primary btn-lg btn3d"><span
-            class="glyphicon glyphicon-download-alt"></span>See Text</button>
+    <textarea rows=20 cols=185 id="transcript">{{ transcript_text }}</textarea>
     <button id="dload" onclick="dload()" class="btn btn-primary btn-lg btn3d"><span
             class="glyphicon glyphicon-download-alt"></span>Download</button>
 </div>

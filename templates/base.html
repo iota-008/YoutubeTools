@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		{{ JSGlue.include() }}
 		<!-- Required meta tags -->
 		<meta charset="utf-8" />
 		<meta name="msvalidate.01" content="5E80577DA7A1479B21D79DF825EC172C" />
@@ -35,21 +34,6 @@
 			href="{{ url_for('static', filename='css/style.css') }}"
 		/>
 		<title>{% block title %} {% endblock %}</title>
-		<!-- Clarity tracking code for https://yt-tools.herokuapp.com/ -->
-		<script>
-			(function (c, l, a, r, i, t, y) {
-				c[a] =
-					c[a] ||
-					function () {
-						(c[a].q = c[a].q || []).push(arguments);
-					};
-				t = l.createElement(r);
-				t.async = 1;
-				t.src = "https://www.clarity.ms/tag/" + i;
-				y = l.getElementsByTagName(r)[0];
-				y.parentNode.insertBefore(t, y);
-			})(window, document, "clarity", "script", "4rb5nj89t0");
-		</script>
 	</head>
 
 	<body>
@@ -60,25 +44,24 @@
 				<a href="{{url_for('index')}}">YOUTUBE TOOLS</a>
 			</h5>
 
+			<a class="btn btn-outline-primary mr-2" href="{{ url_for('history') }}"
+				>Run History</a
+			>
 			<a class="btn btn-outline-primary" href="{{ url_for('index')}}"
 				>Go Home</a
 			>
 		</div>
-		{% for message in get_flashed_messages()%}
-		<!-- <div class="container-fluid text-center">
-            <div class="p-3 mb-2 bg-danger text-white">{{message}}</div>
-        </div>
-        <br /> -->
-		<script>
-			alert("{{message}}");
-		</script>
-		{% endfor %} {% block main %} {% endblock %}
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		<div class="container-fluid px-4">
+			{% for message in messages %}
+			<div class="alert alert-info" role="alert">{{ message }}</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+		{% endwith %}
+		{% block main %} {% endblock %}
 
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
-			integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
-			crossorigin="anonymous"
-		></script>
 		<script
 			src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
 			integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
