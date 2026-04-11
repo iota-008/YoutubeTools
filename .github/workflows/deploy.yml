@@ -130,6 +130,13 @@ jobs:
               exit 1
             fi
 
+            TARGET_ENV_IN_DEPLOY="${{ env.DEPLOY_PATH }}/.env.production"
+            if [ "$ENV_FILE_PATH" != "$TARGET_ENV_IN_DEPLOY" ]; then
+              cp "$ENV_FILE_PATH" "$TARGET_ENV_IN_DEPLOY"
+              ENV_FILE_PATH="$TARGET_ENV_IN_DEPLOY"
+              echo "Synced env file into deploy path: $ENV_FILE_PATH"
+            fi
+
             echo "Building and validating compose stack"
             docker compose --project-directory "${{ env.DEPLOY_PATH }}" -f "$COMPOSE_FILE_PATH" --env-file "$ENV_FILE_PATH" pull --ignore-pull-failures
             docker compose --project-directory "${{ env.DEPLOY_PATH }}" -f "$COMPOSE_FILE_PATH" --env-file "$ENV_FILE_PATH" build --pull --parallel
