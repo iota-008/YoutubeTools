@@ -1,211 +1,177 @@
 # YouTube Tools Hub
 
-YouTube Tools Hub is a Flask app that brings multiple creator utilities into one place. It now ships as a modern Material-style dashboard with six working tools and persistent run history.
+YouTube Tools Hub is a Flask-based multi-tool workspace for creators. It provides transcript extraction, thumbnail utilities, stream quality selection, SEO suggestions, channel audit reports, and idea generation from a single dashboard.
 
-## Current tools
+## Feature overview
 
-- Transcript extractor (with quick text download)
-- Thumbnail fetcher
-- Video stream selector (quality-aware)
-- Title and description SEO optimizer
-- Channel audit (recent-video pattern analysis)
-- Idea generator (hook, angle, and CTA suggestions)
+- Transcript extraction with language selection: Fetch captions by selected language with controlled fallback behavior when unavailable.
+- Stream quality selector: Lists available progressive formats and lets users open/download selected media streams.
+- Thumbnail toolkit: Resolves common thumbnail resolutions and supports direct thumbnail download.
+- SEO helper: Produces title/description/hashtag suggestions from available video metadata and transcript context.
+- Channel audit report: Summarizes sampled channel videos (keywords, title patterns, average metrics, and recommendations).
+- Idea generator: Generates structured idea cards (title, angle, CTA) from niche/audience/goal inputs.
+- Run history tracking: Stores tool runs in DB (`ToolRun`) and exposes both UI and JSON history endpoints.
+- Resilient data sourcing: Uses multiple providers/fallbacks (`pytubefix`, transcript API, `yt-dlp`, oEmbed/feed) to reduce failure rates.
 
-## Why this version is production-ready
+## Architecture
 
-- Stateless server flow (no global in-memory stream cache)
-- No server-side write to shared transcript files
-- Better YouTube URL parsing (`watch`, `youtu.be`, `shorts`, `embed`, raw ID)
-- Environment-driven security config (`SECRET_KEY`, optional `FORCE_HTTPS`)
-- Persistent run history stored in SQL database
-- Docker + Gunicorn runtime
-- Modern Material-style dashboard UI
+### High-level flow
 
-## Stack
+1. User opens a tool route (`/tools/...`) and submits a YouTube URL or input parameters.
+2. App extracts normalized video/channel identifiers.
+3. Tool logic resolves metadata/captions/streams using primary provider + fallback providers.
+4. Result is rendered in UI and a run record is stored in DB (`ToolRun`).
 
-- Flask 3.x
-- Gunicorn
+### Reliability strategy
+
+- Multiple data source fallbacks (pytubefix/pytube, YouTube transcript API, yt-dlp, oEmbed/RSS where applicable).
+- Graceful warnings for partial data.
+- Stateless request handling (no long-lived in-memory state needed between requests).
+
+### Deployment topology
+
+- Reverse proxy: Traefik on external Docker network `web`.
+- App stack: `web` + `db` from compose.
+- CI/CD: GitHub Actions SSH deployment.
+- VM file strategy:
+  - Source clone in `/opt/projects/yt-tools`
+  - Stack env/compose can live in `/home/ubuntu/stacks/yt-tools`
+
+## Implemented tools
+
+- Transcript Extractor
+- Video Stream Selector
+- Thumbnail Tool
+- Title & Description Optimizer
+- Channel Audit
+- Idea Generator
+
+## Technology stack
+
+- Python 3.12
+- Flask 3.x + Jinja2
 - Flask-SQLAlchemy
-- pytube
-- youtube-transcript-api
 - Flask-Talisman
+- Gunicorn
+- pytubefix + pytube
+- youtube-transcript-api
+- yt-dlp
+- requests
+- PostgreSQL 16 (prod)
+
+## Repository layout
+
+- `app.py`: routes + tool implementations + DB model + fallback logic
+- `templates/`: tool pages and base layout
+- `static/`: css/js/favicon/robots/sitemap
+- `docker-compose.yml`: production-oriented compose stack for VM deployment
+- `.github/workflows/deploy.yml`: CI deploy automation
+- `.env.production.example`: production env template
+
+## Environment variables
+
+Core:
+
+- `SECRET_KEY`
+- `FORCE_HTTPS` (`true` in production behind TLS)
+- `APP_DOMAIN`
+- `DATABASE_URL`
+- `POSTGRES_DB`
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
+
+DB URI example:
+
+`postgresql+psycopg://youtubetools:<password>@db:5432/youtubetools`
+
+Use URL-safe passwords for `DATABASE_URL` or URL-encode reserved characters.
 
 ## Local development
 
-1. Install dependencies
+1. Install deps: `pip install -r requirements.txt`
+2. Create `.env` (optional):
 
-	`pip install -r requirements.txt`
+```env
+SECRET_KEY=replace-with-random-secret
+FORCE_HTTPS=false
+DATABASE_URL=sqlite:///youtube_tools.db
+```
 
-2. Create `.env` (optional but recommended)
+3. Run: `flask --app app run --debug`
+4. Open: `http://127.0.0.1:5000`
 
-	```env
-	SECRET_KEY=replace-with-random-secret
-	FORCE_HTTPS=false
-	DATABASE_URL=sqlite:///youtube_tools.db
-	```
+## Production deployment (VM + Traefik)
 
-3. Run app
+### VM prerequisites
 
-	`flask --app app run --debug`
+- Docker + Compose plugin installed
+- Shared proxy network: `docker network create web`
 
-4. Open browser
+### GitHub repository variables
 
-	`http://127.0.0.1:5000`
+- `VM_USER`
+- `DEPLOY_PATH` (example `/opt/projects/yt-tools`)
+- `COMPOSE_FILE` (optional)
+- `ENV_FILE` (optional)
 
-## Production run
+### GitHub repository secrets
 
-Use Gunicorn (or equivalent process manager):
+- `VM_HOST`
+- `SSH_PRIVATE_KEY`
+- `VM_HOST_KEY` (recommended)
 
-`gunicorn --bind 0.0.0.0:$PORT app:app`
+### Deployment behavior (current workflow)
 
-Set environment variables in production:
-
-- `SECRET_KEY` (required)
-- `FORCE_HTTPS=true` when behind TLS/reverse proxy
-- `DATABASE_URL` (defaults to local SQLite if omitted)
-
-## Deploy to VM (Traefik + GitHub Actions)
-
-This repo is configured to deploy the same way as your previous project:
-
-- `docker-compose.prod.yml` with Traefik labels
-- GitHub Actions workflow: `.github/workflows/deploy.yml`
-- Production env template: `.env.production.example`
-
-### 1) One-time VM setup
-
-Install Docker + Docker Compose plugin on the VM, then create the shared Traefik network (same network your reverse proxy uses):
-
-`docker network create web`
-
-### 2) Create production env file on VM
-
-On the VM deployment path, create `.env.production` from `.env.production.example` and set real values:
-
-- `SECRET_KEY`
-- `APP_DOMAIN` (e.g. `yttools.yourdomain.duckdns.org`)
-- `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`
-- `DATABASE_URL` (must match the DB credentials)
-
-### 3) Configure GitHub repository secrets
-
-- `VM_HOST` → VM public IP or DNS
-- `SSH_PRIVATE_KEY` → private key content used for SSH login
-- `VM_HOST_KEY` (optional but recommended) → host key from `ssh-keyscan`
-
-### 4) Configure GitHub repository variables
-
-- `VM_USER` → SSH user on VM
-- `DEPLOY_PATH` → target folder on VM (example: `/opt/youtubetools`)
-- `COMPOSE_FILE` (optional) → defaults to `${DEPLOY_PATH}/docker-compose.prod.yml`
-- `ENV_FILE` (optional) → defaults to `${DEPLOY_PATH}/.env.production`
-
-### 5) Trigger deployment
-
-Push to `master` (or run workflow manually). The deploy job will:
-
-- clone latest repo on VM
-- build Docker image
-- validate compose config
-- start/update containers with `docker compose up -d`
-
-### Notes
-
-- This app uses PostgreSQL in production compose.
-- `psycopg[binary]` is included in `requirements.txt` for `postgresql+psycopg://` support.
-- If workflow says env file is missing, create `.env.production` at the path used by `ENV_FILE`.
+- Triggers on push to `master`/`main` and manual dispatch.
+- Resolves compose/env from variable path, then stack dir, then deploy dir.
+- Fresh clones source into `DEPLOY_PATH`.
+- Copies resolved env file into `DEPLOY_PATH/.env.production` for compose compatibility.
+- Uses `docker compose --project-directory $DEPLOY_PATH ...`.
 
 ## Operational endpoints
 
-- `GET /health` — service liveness
-- `GET /api/history` — latest tool run events as JSON
-- `GET /history` — dashboard page for recent tool runs
+- `GET /health`: liveness check
+- `GET /history`: rendered run history
+- `GET /api/history`: JSON run history
 
-## Suggested architecture for “all YouTube tools in one place”
+## Security and compliance notes
 
-Build the app as a hub with modular tool packages:
+- Keep `.env` and `.flaskenv` out of git.
+- Rotate any secrets if they were ever committed.
+- Respect YouTube Terms and applicable content policies.
+- Use this project for metadata/transcript/tooling workflows, not unauthorized redistribution.
 
-- `tools/transcript/`
-- `tools/thumbnail/`
-- `tools/download/`
-- `tools/seo/`
-- `tools/channel-audit/`
-- `tools/idea-generator/`
+## Troubleshooting
 
-Add shared infrastructure:
+### Wrong language transcript returned
 
-- PostgreSQL for saved jobs/history
-- Redis + worker queue for long-running tasks
-- Auth + per-user usage limits
-- Structured logging + metrics + error tracking
+Language selection is strict with fallback logic; if selected language isn’t accessible, tool returns unavailable/fallback warning instead of unrelated language.
 
-## Priority roadmap
+### `env file .../.env.production not found`
 
-### P0 (foundation)
+Ensure stack env exists and workflow has permissions. Current workflow syncs env file into deploy path before compose operations.
 
-- Input validation and centralized error handling
-- Auth and user workspace
-- Persisted tool run history
-- Background jobs for expensive tasks
+### PostgreSQL connection issues
 
-### P1 (creator-focused tools)
-
-- Title/description optimizer
-- Transcript summarizer and chapter generator
-- Keyword and hashtag helper
-- Thumbnail A/B metadata tracker
-
-### P2 (portfolio differentiation)
-
-- Channel performance dashboard
-- Export reports (PDF/CSV)
-- Team/project workspace mode
-- Public API for selected tools
-
-## Compliance notes
-
-- Follow YouTube Terms and API policies
-- Avoid unauthorized redistribution/downloading workflows
-- Clearly communicate usage limits and data handling in Privacy/Terms pages
+- Verify `POSTGRES_*` values and `DATABASE_URL` match.
+- If password changed after DB volume init, recreate DB volume and redeploy.
 
 ## Screenshots
 
-Home page  
-![Home Page](screenshots/home-page.png?raw=true)
+Core flow  
+![Home Page](screenshots/1.png?raw=true)
+![Enter Video Link](screenshots/2.png?raw=true)
+![Get Transcript](screenshots/3.png?raw=true)
+![Download video](screenshots/4.png?raw=true)
+![Download thumbnail](screenshots/5.png?raw=true)
+![Download thumbnail 2](screenshots/6.png?raw=true)
 
-Enter Video Link  
-![Enter Video Link](screenshots/transcript-input.png?raw=true)
-
-Get Transcript  
-![Get Transcript](screenshots/transcript-result.png?raw=true)
-
-Download video  
-![Download video](screenshots/stream-selector.png?raw=true)
-
-Download thumbnail  
-![Download thumbnail](screenshots/thumbnail-options.png?raw=true)
-![Download thumbnail 2](screenshots/thumbnail-download.png?raw=true)
-
-Dashboard overview  
-![Dashboard overview](screenshots/dashboard-overview.png?raw=true)
-
-Transcript tool page  
-![Transcript tool page](screenshots/transcript-tool-page.png?raw=true)
-
-Transcript output page  
-![Transcript output page](screenshots/transcript-output-page.png?raw=true)
-
-Video stream page  
-![Video stream page](screenshots/video-stream-page.png?raw=true)
-
-Thumbnail tool page  
-![Thumbnail tool page](screenshots/thumbnail-tool-page.png?raw=true)
-
-SEO optimizer page  
-![SEO optimizer page](screenshots/seo-optimizer-page.png?raw=true)
-
-Channel audit page  
-![Channel audit page](screenshots/channel-audit-page.png?raw=true)
-
-Idea generator page  
-![Idea generator page](screenshots/idea-generator-page.png?raw=true)
+Extended screens  
+![Dashboard overview](screenshots/screen-07-dashboard-overview.png?raw=true)
+![Transcript tool page](screenshots/screen-08-transcript-tool-page.png?raw=true)
+![Transcript output page](screenshots/screen-09-transcript-output-page.png?raw=true)
+![Video stream page](screenshots/screen-10-video-stream-page.png?raw=true)
+![Thumbnail tool page](screenshots/screen-11-thumbnail-tool-page.png?raw=true)
+![SEO optimizer page](screenshots/screen-12-seo-optimizer-page.png?raw=true)
+![Channel audit page](screenshots/screen-13-channel-audit-page.png?raw=true)
+![Idea generator page](screenshots/screen-14-idea-generator-page.png?raw=true)
