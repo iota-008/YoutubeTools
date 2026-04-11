@@ -171,17 +171,41 @@ Add shared infrastructure:
 ## Screenshots
 
 Home page  
-![Home Page](screenshots/1.png?raw=true)
+![Home Page](screenshots/home-page.png?raw=true)
 
 Enter Video Link  
-![Enter Video Link](screenshots/2.png?raw=true)
+![Enter Video Link](screenshots/transcript-input.png?raw=true)
 
 Get Transcript  
-![Get Transcript](screenshots/3.png?raw=true)
+![Get Transcript](screenshots/transcript-result.png?raw=true)
 
 Download video  
-![Download video](screenshots/4.png?raw=true)
+![Download video](screenshots/stream-selector.png?raw=true)
 
 Download thumbnail  
-![Download thumbnail](screenshots/5.png?raw=true)
-![Download thumbnail 2](screenshots/6.png?raw=true)
+![Download thumbnail](screenshots/thumbnail-options.png?raw=true)
+![Download thumbnail 2](screenshots/thumbnail-download.png?raw=true)
+
+Dashboard overview  
+![Dashboard overview](screenshots/dashboard-overview.png?raw=true)
+
+Transcript tool page  
+![Transcript tool page](screenshots/transcript-tool-page.png?raw=true)
+
+Transcript output page  
+![Transcript output page](screenshots/transcript-output-page.png?raw=true)
+
+Video stream page  
+![Video stream page](screenshots/video-stream-page.png?raw=true)
+
+Thumbnail tool page  
+![Thumbnail tool page](screenshots/thumbnail-tool-page.png?raw=true)
+
+SEO optimizer page  
+![SEO optimizer page](screenshots/seo-optimizer-page.png?raw=true)
+
+Channel audit page  
+![Channel audit page](screenshots/channel-audit-page.png?raw=true)
+
+Idea generator page  
+![Idea generator page](screenshots/idea-generator-page.png?raw=true)
