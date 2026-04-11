@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.venv/
+
+# Flask / local runtime
+instance/
+*.db
+
+# Environment files (secrets)
+.env
+.env.*
+!.env.production.example
+.flaskenv
+
+# OS/editor noise
+.DS_Store
+.vscode/

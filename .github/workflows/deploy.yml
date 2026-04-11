@@ -48,11 +48,19 @@ jobs:
             COMPOSE_FILE_PATH="${{ env.COMPOSE_FILE }}"
             if [ -z "$COMPOSE_FILE_PATH" ]; then
               COMPOSE_FILE_PATH="${{ env.DEPLOY_PATH }}/docker-compose.prod.yml"
+            elif [ ! -f "$COMPOSE_FILE_PATH" ]; then
+              echo "Configured COMPOSE_FILE not found: $COMPOSE_FILE_PATH"
+              COMPOSE_FILE_PATH="${{ env.DEPLOY_PATH }}/docker-compose.prod.yml"
+              echo "Falling back to: $COMPOSE_FILE_PATH"
             fi
 
             ENV_FILE_PATH="${{ env.ENV_FILE }}"
             if [ -z "$ENV_FILE_PATH" ]; then
               ENV_FILE_PATH="${{ env.DEPLOY_PATH }}/.env.production"
+            elif [ ! -f "$ENV_FILE_PATH" ]; then
+              echo "Configured ENV_FILE not found: $ENV_FILE_PATH"
+              ENV_FILE_PATH="${{ env.DEPLOY_PATH }}/.env.production"
+              echo "Falling back to: $ENV_FILE_PATH"
             fi
 
             echo "Preparing deployment directory: ${{ env.DEPLOY_PATH }}"
