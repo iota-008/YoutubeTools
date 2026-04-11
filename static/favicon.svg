@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="YouTube Tools Hub favicon">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff0033"/>
+      <stop offset="100%" stop-color="#ff3d5e"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="8" width="56" height="48" rx="12" fill="url(#g)"/>
+  <polygon points="27,22 27,42 43,32" fill="#ffffff"/>
+</svg>
