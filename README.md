@@ -2,6 +2,14 @@
 
 YouTube Tools Hub is a Flask-based multi-tool workspace for creators. It provides transcript extraction, thumbnail utilities, stream quality selection, SEO suggestions, channel audit reports, and idea generation from a single dashboard.
 
+## Snapshot
+
+- **Product:** Multi-tool creator platform for YouTube research, optimization, and content planning.
+- **Core engineering value:** Reliable data extraction with multi-provider fallback strategy across transcript/metadata/stream sources.
+- **Backend:** Flask, SQLAlchemy, PostgreSQL, yt-dlp, youtube-transcript-api, pytubefix.
+- **DevOps:** Dockerized deployment behind Traefik with GitHub Actions-based VM delivery.
+- **Ownership signal:** End-to-end feature delivery (tool design, persistence, reliability, and deployment automation).
+
 ## Feature overview
 
 - Transcript extraction with language selection: Fetch captions by selected language with controlled fallback behavior when unavailable.
