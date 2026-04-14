@@ -165,21 +165,5 @@ Ensure stack env exists and workflow has permissions. Current workflow syncs env
 - If password changed after DB volume init, recreate DB volume and redeploy.
 
 ## Screenshots
+<img width="1168" height="1103" alt="image" src="https://github.com/user-attachments/assets/7750fa46-0617-4e92-9336-22b45e7ff443" />
 
-Core flow  
-![Home Page](screenshots/1.png?raw=true)
-![Enter Video Link](screenshots/2.png?raw=true)
-![Get Transcript](screenshots/3.png?raw=true)
-![Download video](screenshots/4.png?raw=true)
-![Download thumbnail](screenshots/5.png?raw=true)
-![Download thumbnail 2](screenshots/6.png?raw=true)
-
-Extended screens  
-![Dashboard overview](screenshots/screen-07-dashboard-overview.png?raw=true)
-![Transcript tool page](screenshots/screen-08-transcript-tool-page.png?raw=true)
-![Transcript output page](screenshots/screen-09-transcript-output-page.png?raw=true)
-![Video stream page](screenshots/screen-10-video-stream-page.png?raw=true)
-![Thumbnail tool page](screenshots/screen-11-thumbnail-tool-page.png?raw=true)
-![SEO optimizer page](screenshots/screen-12-seo-optimizer-page.png?raw=true)
-![Channel audit page](screenshots/screen-13-channel-audit-page.png?raw=true)
-![Idea generator page](screenshots/screen-14-idea-generator-page.png?raw=true)
